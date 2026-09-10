@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'motion/react';
 
 interface NavbarProps {
   currentView: ViewType;
-  onNavigate: (view: ViewType) => void;
+  onNavigate: (view: ViewType, options?: { authTab?: 'login' | 'register' }) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
@@ -37,8 +37,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
     { label: t('nav.resources'), view: 'resources' },
   ];
 
-  const handleNav = (v: ViewType) => {
-    onNavigate(v);
+  const handleNav = (v: ViewType, options?: { authTab?: 'login' | 'register' }) => {
+    onNavigate(v, options);
     setMobileMenuOpen(false);
   };
 
@@ -163,7 +163,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
             <div className="flex items-center gap-2 ml-1">
               <button
                 type="button"
-                onClick={() => handleNav('auth')}
+                onClick={() => handleNav('auth', { authTab: 'login' })}
                 className="sb-btn px-3.5 py-2 rounded-xl text-xs font-bold text-[#123B5D] hover:bg-stone-100 transition-colors cursor-pointer"
               >
                 {t('nav.login')}
@@ -171,10 +171,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
 
               <button
                 type="button"
-                onClick={() => handleNav('onboarding')}
+                onClick={() => handleNav('auth', { authTab: 'register' })}
                 className="sb-btn px-4 py-2.5 rounded-xl bg-[#123B5D] hover:bg-[#101820] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-2 cursor-pointer group"
               >
-                <span>{t('nav.join')}</span>
+                <span>Créer un compte</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#C8F169] group-hover:translate-x-0.5 transition-transform" />
               </button>
             </div>
@@ -259,17 +259,17 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
                 <>
                   <button
                     type="button"
-                    onClick={() => handleNav('auth')}
+                    onClick={() => handleNav('auth', { authTab: 'login' })}
                     className="sb-btn w-full py-2.5 rounded-xl bg-white border border-[#E2E8E5] text-[#123B5D] font-bold text-xs cursor-pointer"
                   >
                     {t('nav.login')}
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleNav('onboarding')}
+                    onClick={() => handleNav('auth', { authTab: 'register' })}
                     className="sb-btn w-full py-2.5 rounded-xl bg-[#123B5D] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <span>{t('nav.join')}</span>
+                    <span>Créer un compte</span>
                     <ArrowRight className="w-3.5 h-3.5 text-[#C8F169]" />
                   </button>
                 </>

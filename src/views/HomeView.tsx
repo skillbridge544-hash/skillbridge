@@ -23,7 +23,7 @@ interface HomeViewProps {
   isAuthenticated?: boolean;
 }
 
-export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
+export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, isAuthenticated }) => {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSent, setNewsletterSent] = useState(false);
 
@@ -77,10 +77,10 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
                 <button
                   type="button"
-                  onClick={() => onNavigate('onboarding')}
+                  onClick={() => onNavigate(isAuthenticated ? 'dashboard-talent' : 'onboarding')}
                   className="sb-btn w-full sm:w-auto px-8 py-4 rounded-xl bg-[#123B5D] hover:bg-[#101820] text-white font-bold text-sm sm:text-base tracking-wide transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 cursor-pointer group"
                 >
-                  <span>Rejoindre SkillBridge</span>
+                  <span>{isAuthenticated ? 'Accéder à mon espace' : 'Rejoindre SkillBridge'}</span>
                   <ArrowRight className="w-4 h-4 text-[#C8F169] group-hover:translate-x-1 transition-transform" />
                 </button>
 

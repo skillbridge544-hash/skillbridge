@@ -4,12 +4,13 @@ import { StatusAlert } from '../components/StatusAlert';
 import { Mail, Lock, ArrowRight, KeyRound, CheckCircle2 } from 'lucide-react';
 
 interface AuthViewProps {
-  onSuccess?: () => void;
+  initialTab?: 'login' | 'register' | 'forgot';
+  onSuccess?: (role?: 'talent' | 'mentor' | 'company') => void;
 }
 
-export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
+export const AuthView: React.FC<AuthViewProps> = ({ initialTab = 'login', onSuccess }) => {
   const { signIn, signUp, loadDemoAccount } = useAuth();
-  const [tab, setTab] = useState<'login' | 'register' | 'forgot'>('login');
+  const [tab, setTab] = useState<'login' | 'register' | 'forgot'>(initialTab);
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
@@ -22,6 +23,8 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
   const [regPassword, setRegPassword] = useState('');
   const [regConfirmPassword, setRegConfirmPassword] = useState('');
   const [regRole, setRegRole] = useState<'talent' | 'mentor' | 'company'>('talent');
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
 
   // Forgot password form state
   const [forgotEmail, setForgotEmail] = useState('');
@@ -71,8 +74,19 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
       return;
     }
 
+    if (regPassword.length < 6) {
+      setErrorMessage('Le mot de passe doit contenir au moins 6 caractères.');
+      return;
+    }
+
     if (regPassword !== regConfirmPassword) {
       setErrorMessage('Les mots de passe ne correspondent pas.');
+      return;
+    }
+
+    // Validation stricte des cases à cocher obligatoires
+    if (!termsAccepted || !privacyAccepted) {
+      setErrorMessage('Veuillez accepter les conditions requises pour continuer.');
       return;
     }
 
@@ -91,7 +105,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
         setErrorMessage(res.error || 'Impossible de créer le compte.');
       } else {
         setSuccessMessage('Compte initialisé avec succès ! Accès à votre espace...');
-        if (onSuccess) onSuccess();
+        if (onSuccess) onSuccess(regRole);
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Erreur lors de l’inscription.';
@@ -267,26 +281,36 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
                   <div className="text-[11px] font-mono text-stone-400 uppercase tracking-wider text-center">
                     Ou tester en un clic
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => {
                         loadDemoAccount('talent');
-                        if (onSuccess) onSuccess();
+                        if (onSuccess) onSuccess('talent');
                       }}
-                      className="py-2 px-3 rounded-xl border border-stone-200 bg-stone-50 hover:bg-white text-[11px] font-bold text-[#123B5D] transition-colors text-center shadow-2xs"
+                      className="py-2 px-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-white text-[11px] font-bold text-[#123B5D] transition-colors text-center shadow-2xs cursor-pointer"
                     >
-                      Démo Talent
+                      Talent
                     </button>
                     <button
                       type="button"
                       onClick={() => {
                         loadDemoAccount('mentor');
-                        if (onSuccess) onSuccess();
+                        if (onSuccess) onSuccess('mentor');
                       }}
-                      className="py-2 px-3 rounded-xl border border-stone-200 bg-stone-50 hover:bg-white text-[11px] font-bold text-[#59B83E] transition-colors text-center shadow-2xs"
+                      className="py-2 px-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-white text-[11px] font-bold text-[#59B83E] transition-colors text-center shadow-2xs cursor-pointer"
                     >
-                      Démo Mentor
+                      Mentor
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        loadDemoAccount('company');
+                        if (onSuccess) onSuccess('company');
+                      }}
+                      className="py-2 px-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-white text-[11px] font-bold text-[#101820] transition-colors text-center shadow-2xs cursor-pointer"
+                    >
+                      Entreprise
                     </button>
                   </div>
                 </div>
@@ -382,6 +406,51 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
                       placeholder="Répéter"
                       className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F7F6] border border-[#E2E8E5] text-[#101820] placeholder-stone-400 focus:outline-hidden focus:border-[#123B5D] text-xs transition-colors"
                     />
+                  </div>
+                </div>
+
+                {/* CASES À COCHER OBLIGATOIRES AVEC VALIDATION STRICTE */}
+                <div className="space-y-3 pt-3 pb-1 border-t border-[#E2E8E5]/80 text-left">
+                  <div className="flex items-start gap-3">
+                    <input
+                      id="sb-terms-checkbox"
+                      type="checkbox"
+                      required
+                      checked={termsAccepted}
+                      onChange={(e) => setTermsAccepted(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 rounded-md border-[#CBD5E1] text-[#59B83E] focus:ring-[#59B83E] focus:ring-offset-1 cursor-pointer shrink-0 accent-[#59B83E]"
+                    />
+                    <label
+                      htmlFor="sb-terms-checkbox"
+                      className="text-xs text-stone-600 leading-snug cursor-pointer select-none"
+                    >
+                      J'accepte les{' '}
+                      <span className="text-[#123B5D] font-semibold underline decoration-[#59B83E]/40 hover:text-[#59B83E]">
+                        Conditions d'utilisation
+                      </span>{' '}
+                      <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <input
+                      id="sb-privacy-checkbox"
+                      type="checkbox"
+                      required
+                      checked={privacyAccepted}
+                      onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 rounded-md border-[#CBD5E1] text-[#59B83E] focus:ring-[#59B83E] focus:ring-offset-1 cursor-pointer shrink-0 accent-[#59B83E]"
+                    />
+                    <label
+                      htmlFor="sb-privacy-checkbox"
+                      className="text-xs text-stone-600 leading-snug cursor-pointer select-none"
+                    >
+                      J'accepte la{' '}
+                      <span className="text-[#123B5D] font-semibold underline decoration-[#59B83E]/40 hover:text-[#59B83E]">
+                        Politique de confidentialité
+                      </span>{' '}
+                      <span className="text-rose-500 font-bold">*</span>
+                    </label>
                   </div>
                 </div>
 
