@@ -21,6 +21,15 @@ app.use(
 );
 app.use(express.json({ limit: "1mb" }));
 
+app.get("/", (_req, res) => {
+  res.json({
+    service: "skillbridge-api",
+    status: "ok",
+    health: "/api/health",
+    auth: { register: "POST /api/auth/register", login: "POST /api/auth/login" },
+  });
+});
+
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", service: "skillbridge-api" });
 });
