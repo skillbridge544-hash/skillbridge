@@ -19,12 +19,12 @@ export default function Navbar() {
         )}
         {user && (
           <>
-            <NavLink to="/app">Tableau de bord</NavLink>
-            <NavLink to="/app/passport">Passport</NavLink>
+            <NavLink to="/app" end>Accueil</NavLink>
+            {user.role !== "entreprise" && <NavLink to="/app/passport">Passport</NavLink>}
             {user.role !== "entreprise" && <NavLink to="/app/projets">Projets</NavLink>}
             <NavLink to="/app/opportunites">Opportunités</NavLink>
             <NavLink to="/app/mentors">Mentors</NavLink>
-            <span className="muted" style={{ color: "#c9d4e3" }}>{user.nom}</span>
+            <span className="who">{user.nom}</span>
             <button
               className="link"
               type="button"
@@ -33,7 +33,7 @@ export default function Navbar() {
                 navigate("/");
               }}
             >
-              Déconnexion
+              Sortir
             </button>
           </>
         )}

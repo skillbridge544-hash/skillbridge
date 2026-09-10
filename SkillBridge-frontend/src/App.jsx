@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import Protected from "./components/Protected";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -18,10 +19,11 @@ import Messages from "./pages/Messages";
 
 function Shell({ children }) {
   return (
-    <>
+    <div className="app-shell">
       <Navbar />
-      {children}
-    </>
+      <main>{children}</main>
+      <Footer />
+    </div>
   );
 }
 

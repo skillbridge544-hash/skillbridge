@@ -4,10 +4,10 @@ import { api } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
 const DEMOS = [
-  { label: "Talent Aminata", email: "aminata@demo.skillbridge" },
-  { label: "Talent Koffi", email: "koffi@demo.skillbridge" },
-  { label: "Entreprise Inov", email: "recrutement@inovcotonou.demo" },
-  { label: "Mentor Jean", email: "jean@demo.skillbridge" },
+  { label: "Aminata · talent", email: "aminata@demo.skillbridge" },
+  { label: "Koffi · data", email: "koffi@demo.skillbridge" },
+  { label: "Inov · entreprise", email: "recrutement@inovcotonou.demo" },
+  { label: "Jean · mentor", email: "jean@demo.skillbridge" },
 ];
 
 export default function Login() {
@@ -30,25 +30,38 @@ export default function Login() {
   }
 
   return (
-    <div className="page" style={{ maxWidth: 480 }}>
-      <h1>Connexion</h1>
-      <form className="card" onSubmit={onSubmit}>
-        <label>Email</label>
-        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />
-        <label>Mot de passe</label>
-        <input value={mot_de_passe} onChange={(e) => setPassword(e.target.value)} type="password" required />
-        {error && <p className="err">{error}</p>}
-        <button className="btn btn-green" style={{ marginTop: 16 }} type="submit">Se connecter</button>
-        <p className="muted">Pas encore de compte ? <Link to="/register">Inscription</Link></p>
-      </form>
-      <div className="demo" style={{ marginTop: 16 }}>
-        <strong>Comptes démo</strong> — mot de passe <code>Password123</code>
-        <div className="row" style={{ marginTop: 8 }}>
-          {DEMOS.map((d) => (
-            <button key={d.email} type="button" className="btn btn-ghost" onClick={() => setEmail(d.email)}>
-              {d.label}
-            </button>
-          ))}
+    <div className="auth-split">
+      <aside className="auth-brand">
+        <div>
+          <img src="/brand/logo-stacked.png" alt="SkillBridge" />
+          <p style={{ textAlign: "center", color: "#c9d6e8", marginTop: 18 }}>
+            Connecte tes preuves aux bonnes opportunités.
+          </p>
+        </div>
+      </aside>
+      <div className="auth-form">
+        <div className="box">
+          <h1>Bon retour</h1>
+          <p className="muted">Connecte-toi pour voir tes matchs et ton Skill Passport.</p>
+          <form className="card" onSubmit={onSubmit}>
+            <label>Email</label>
+            <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />
+            <label>Mot de passe</label>
+            <input value={mot_de_passe} onChange={(e) => setPassword(e.target.value)} type="password" required />
+            {error && <p className="err">{error}</p>}
+            <button className="btn btn-green" style={{ marginTop: 16, width: "100%" }} type="submit">Entrer</button>
+            <p className="muted">Pas encore de compte ? <Link to="/register">Inscription</Link></p>
+          </form>
+          <div className="demo" style={{ marginTop: 16 }}>
+            <strong>Jury / démo</strong> — mot de passe <code>Password123</code>
+            <div className="row" style={{ marginTop: 8 }}>
+              {DEMOS.map((d) => (
+                <button key={d.email} type="button" className="btn btn-ghost" onClick={() => setEmail(d.email)}>
+                  {d.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
