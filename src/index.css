@@ -2,34 +2,101 @@
 
 @layer base {
   :root {
-    --sb-deep-blue: #123B5D;
-    --sb-green: #59B83E;
-    --sb-light-green: #C8F169;
-    --sb-near-black: #101820;
+    --sb-navy: #06234B;
+    --sb-green: #68A91B;
+    --sb-light: #F7F8F3;
+    --sb-text: #1A2233;
+    --sb-secondary: #5C6B78;
     --sb-white: #FFFFFF;
-    --sb-soft: #F5F7F6;
+
+    /* Legacy semantic token mappings */
+    --sb-deep-blue: #06234B;
+    --sb-green-accent: #68A91B;
+    --sb-light-green: #68A91B;
+    --sb-near-black: #1A2233;
+    --sb-soft: #F7F8F3;
+  }
+
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   body {
-    font-family: 'Manrope', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #F5F7F6;
-    color: #101820;
+    font-family: 'Plus Jakarta Sans', 'Inter', 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #F7F8F3;
+    color: #1A2233;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.65;
     transition: background-color 200ms ease, color 200ms ease;
   }
 
   html.dark body {
-    background-color: #0B131B;
-    color: #F1F5F9;
+    background-color: #06152B;
+    color: #F7F8F3;
   }
   
-  h1, h2, h3, h4, .font-heading {
-    font-family: 'Manrope', sans-serif;
-    letter-spacing: -0.03em;
+  /* Editorial & High-impact Headings */
+  h1 {
+    font-family: Georgia, 'Newsreader', 'Times New Roman', serif;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: #06234B;
+    overflow-wrap: break-word;
   }
 
-  .font-editorial {
-    font-family: 'Newsreader', Georgia, serif;
+  h2 {
+    font-family: Georgia, 'Newsreader', 'Times New Roman', serif;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: #06234B;
+    overflow-wrap: break-word;
+  }
+
+  h3, h4, h5, h6, .font-heading {
+    font-family: 'Plus Jakarta Sans', 'Inter', 'Manrope', sans-serif;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    color: #06234B;
+    overflow-wrap: break-word;
+  }
+
+  p {
+    line-height: 1.65;
+    color: #1A2233;
+    overflow-wrap: break-word;
+  }
+
+  .text-secondary {
+    color: #5C6B78;
+  }
+
+  .font-editorial, .font-serif {
+    font-family: Georgia, 'Newsreader', Cambria, serif;
+  }
+
+  .font-interface, .font-sans {
+    font-family: 'Plus Jakarta Sans', 'Inter', 'Manrope', sans-serif;
+  }
+
+  /* Form & Interactive Elements */
+  button, .sb-btn {
+    font-family: 'Plus Jakarta Sans', 'Inter', 'Manrope', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    touch-action: manipulation;
+  }
+
+  label {
+    font-family: 'Plus Jakarta Sans', 'Inter', 'Manrope', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #06234B;
+    letter-spacing: 0.01em;
   }
 }
 

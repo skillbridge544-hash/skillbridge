@@ -1,7 +1,6 @@
 import React from 'react';
 import { ViewType } from '../types/platform';
 import { useAuth } from '../context/AuthContext';
-import { useLearning } from '../context/LearningContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { UserAvatar } from './UserAvatar';
@@ -9,22 +8,16 @@ import { FaIcon } from './FaIcon';
 import { SkillBridgeLogo } from './SkillBridgeLogo';
 import { Sun, Moon } from 'lucide-react';
 import { 
-  faHouse, 
-  faGraduationCap, 
-  faCompass, 
-  faShieldHalved, 
-  faCertificate, 
   faBell, 
   faArrowRightFromBracket, 
-  faGear, 
-  faAward,
-  faChevronRight,
-  faRetweet,
-  faComments,
-  faFolderOpen,
-  faBriefcase,
-  faBookmark
+  faGear,
 } from '@fortawesome/free-solid-svg-icons';
+import {
+  TALENT_NAVIGATION,
+  MENTOR_NAVIGATION,
+  COMPANY_NAVIGATION,
+  NavItemConfig,
+} from '../config/navigation';
 
 interface AppSidebarProps {
   currentView: ViewType;
@@ -39,104 +32,97 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   onNavigate,
   onOpenNotifications,
   onOpenProfileModal,
-  unreadNotificationsCount = 0
+  unreadNotificationsCount = 0,
 }) => {
   const { user, profile, signOut } = useAuth();
-  const { userCertificates } = useLearning();
   const { theme, toggleTheme } = useTheme();
-  const { language, toggleLanguage, t } = useLanguage();
+  const { language, toggleLanguage } = useLanguage();
 
-  const isViewActive = (navKey: string): boolean => {
-    switch (navKey) {
-      case 'dashboard':
-        return currentView === 'dashboard-talent' || currentView === 'dashboard-mentor' || currentView === 'dashboard-company';
-      case 'learn':
-        return currentView === 'learn' || currentView === 'learn-detail' || currentView === 'lesson-player' || currentView === 'mentor-studio';
-      case 'explore':
-        return currentView === 'talents' || currentView === 'challenges' || currentView === 'mentors' || currentView === 'companies';
-      case 'passport':
-        return currentView === 'passport';
-      case 'certificates':
-        return currentView === 'certificates';
+  const accountType = profile?.account_type || 'talent';
+
+  // Determine navigation items based on current user account type
+  const getNavItems = (): NavItemConfig[] => {
+    switch (accountType) {
+      case 'mentor':
+        return MENTOR_NAVIGATION;
+      case 'company':
+        return COMPANY_NAVIGATION;
       default:
-        return false;
+        return TALENT_NAVIGATION;
     }
   };
 
-  const navItems = [
-    {
-      key: 'dashboard',
-      label: t('nav.home'),
-      view: 'dashboard-talent' as ViewType,
-      icon: faHouse,
-      active: isViewActive('dashboard')
-    },
-    {
-      key: 'explore',
-      label: t('nav.explorer'),
-      view: 'explorer' as ViewType,
-      icon: faCompass,
-      active: isViewActive('explore')
-    },
-    {
-      key: 'skill-exchange',
-      label: 'Échanges',
-      view: 'skill-exchange' as ViewType,
-      icon: faRetweet,
-      active: isViewActive('skill-exchange')
-    },
-    {
-      key: 'messaging',
-      label: t('nav.messages'),
-      view: 'messaging' as ViewType,
-      icon: faComments,
-      active: isViewActive('messaging')
-    },
-    {
-      key: 'learn',
-      label: t('nav.learn'),
-      view: 'learn' as ViewType,
-      icon: faGraduationCap,
-      active: isViewActive('learn')
-    },
-    {
-      key: 'projects',
-      label: 'Projets',
-      view: 'project-publish' as ViewType,
-      icon: faFolderOpen,
-      active: currentView === 'project-publish'
-    },
-    {
-      key: 'opportunities',
-      label: 'Offres',
-      view: 'opportunities' as ViewType,
-      icon: faBriefcase,
-      active: currentView === 'opportunities'
-    },
-    {
-      key: 'passport',
-      label: t('nav.passport'),
-      view: 'passport' as ViewType,
-      icon: faShieldHalved,
-      active: isViewActive('passport'),
-      highlight: true
-    },
-    {
-      key: 'certificates',
-      label: 'Certifications',
-      view: 'certificates' as ViewType,
-      icon: faCertificate,
-      active: isViewActive('certificates'),
-      count: userCertificates.length
-    },
-    {
-      key: 'favorites',
-      label: 'Favoris',
-      view: 'favorites' as ViewType,
-      icon: faBookmark,
-      active: isViewActive('favorites')
+  const navItems = getNavItems();
+
+  const isItemActive = (item: NavItemConfig): boolean => {
+    if (item.view) {
+      return currentView === item.view;
     }
-  ];
+    return false;
+  };
+
+  const handleItemClick = (item: NavItemConfig) => {
+    if (item.action) {
+      switch (item.action) {
+        case 'openProfile':
+          onOpenProfileModal();
+          return;
+        case 'scrollToSkills': {
+          const el = document.getElementById('talent-skills-section');
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            onNavigate('dashboard-talent');
+            setTimeout(() => {
+              const target = document.getElementById('talent-skills-section');
+              if (target) target.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }
+          return;
+        }
+        case 'scrollToMatches': {
+          const targetId = accountType === 'company' ? 'company-matching-section' : 'talent-matches-section';
+          const el = document.getElementById(targetId);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            onNavigate(accountType === 'company' ? 'dashboard-company' : 'dashboard-talent');
+            setTimeout(() => {
+              const target = document.getElementById(targetId);
+              if (target) target.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }
+          return;
+        }
+        case 'scrollToRequests': {
+          const el = document.getElementById('mentor-requests-section');
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            onNavigate('dashboard-mentor');
+            setTimeout(() => {
+              const target = document.getElementById('mentor-requests-section');
+              if (target) target.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }
+          return;
+        }
+        case 'openPublishModal': {
+          const el = document.getElementById('company-opportunities-section');
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            onNavigate('dashboard-company');
+          }
+          return;
+        }
+      }
+    }
+
+    if (item.view) {
+      onNavigate(item.view);
+    }
+  };
 
   const displayName = profile?.first_name || profile?.last_name
     ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim()
@@ -145,8 +131,15 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   const userRole = profile?.account_type === 'mentor'
     ? 'Mentor & Formateur'
     : profile?.account_type === 'company'
-    ? 'Organisation'
+    ? 'Organisation Entreprise'
     : 'Talent Vérifié';
+
+  const defaultDashboardView: ViewType = 
+    accountType === 'company' 
+      ? 'dashboard-company' 
+      : accountType === 'mentor' 
+      ? 'dashboard-mentor' 
+      : 'dashboard-talent';
 
   return (
     <aside className="hidden lg:flex flex-col w-64 h-screen sticky top-0 bg-[#FAFCFB] border-r border-[#E2E8E5] shrink-0 z-30 select-none">
@@ -154,7 +147,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
       <div className="p-4 border-b border-[#E2E8E5]/70 flex items-center justify-between">
         <button
           type="button"
-          onClick={() => onNavigate('dashboard-talent')}
+          onClick={() => onNavigate(defaultDashboardView)}
           className="flex items-center group text-left cursor-pointer"
         >
           <SkillBridgeLogo size="sm" isDark={theme === 'dark'} />
@@ -165,7 +158,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-1.5 rounded-lg text-stone-500 hover:text-[#123B5D] hover:bg-stone-100 transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-stone-500 hover:text-[#06234B] hover:bg-stone-100 transition-colors cursor-pointer"
             title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
             aria-label="Toggle theme"
           >
@@ -175,7 +168,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           <button
             type="button"
             onClick={toggleLanguage}
-            className="px-1.5 py-1 rounded-lg text-[10px] font-mono font-bold text-stone-500 hover:text-[#123B5D] hover:bg-stone-100 transition-colors cursor-pointer"
+            className="px-1.5 py-1 rounded-lg text-[10px] font-mono font-bold text-stone-500 hover:text-[#06234B] hover:bg-stone-100 transition-colors cursor-pointer"
             title="Langue"
           >
             {language.toUpperCase()}
@@ -185,13 +178,13 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           <button
             type="button"
             onClick={onOpenNotifications}
-            className="relative p-1.5 rounded-lg text-stone-500 hover:text-[#123B5D] hover:bg-stone-100 transition-colors cursor-pointer"
+            className="relative p-1.5 rounded-lg text-stone-500 hover:text-[#06234B] hover:bg-stone-100 transition-colors cursor-pointer"
             title="Notifications"
             aria-label="Notifications"
           >
             <FaIcon icon={faBell} className="text-xs" />
             {unreadNotificationsCount > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#59B83E] ring-2 ring-white sb-pulse-dot" />
+              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#68A91B] ring-2 ring-white sb-pulse-dot" />
             )}
           </button>
         </div>
@@ -199,27 +192,29 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 
       {/* Main Navigation Menu */}
       <nav className="flex-1 px-3 py-6 space-y-1.5 overflow-y-auto">
-        <div className="px-3 pb-2 text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400">
-          Navigation
+        <div className="px-3 pb-2 text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400 flex items-center justify-between">
+          <span>{accountType === 'company' ? 'Entreprise' : accountType === 'mentor' ? 'Espace Mentor' : 'Espace Talent'}</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#68A91B]"></span>
         </div>
 
         {navItems.map((item) => {
+          const active = isItemActive(item);
           return (
             <button
               key={item.key}
               type="button"
-              onClick={() => onNavigate(item.view)}
+              onClick={() => handleItemClick(item)}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all group cursor-pointer hover:translate-x-0.5 ${
-                item.active
-                  ? 'bg-white text-[#123B5D] shadow-xs border border-[#E2E8E5] font-semibold'
-                  : 'text-stone-600 hover:text-[#101820] hover:bg-white/60'
+                active
+                  ? 'bg-white text-[#06234B] shadow-xs border border-[#E2E8E5] font-bold'
+                  : 'text-stone-600 hover:text-[#06234B] hover:bg-white/70'
               }`}
             >
               <div className="flex items-center gap-3">
                 <div className={`p-1.5 rounded-xl transition-colors ${
-                  item.active 
-                    ? 'bg-[#123B5D] text-white shadow-2xs' 
-                    : 'bg-stone-100 text-stone-500 group-hover:text-[#123B5D] group-hover:bg-stone-200/80'
+                  active 
+                    ? 'bg-[#06234B] text-white shadow-2xs' 
+                    : 'bg-stone-100 text-stone-500 group-hover:text-[#06234B] group-hover:bg-stone-200/80'
                 }`}>
                   <FaIcon icon={item.icon} className="text-xs" />
                 </div>
@@ -227,60 +222,13 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
               </div>
 
               {item.highlight && (
-                <span className="px-2 py-0.5 rounded-full bg-[#59B83E]/10 text-[#59B83E] text-[10px] font-mono font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-[#68A91B]/15 text-[#4F8214] text-[10px] font-mono font-bold">
                   Souverain
-                </span>
-              )}
-
-              {item.count !== undefined && item.count > 0 && (
-                <span className="px-1.5 py-0.5 rounded-md bg-stone-100 text-stone-600 text-[10px] font-mono font-bold">
-                  {item.count}
                 </span>
               )}
             </button>
           );
         })}
-
-        {/* Separator */}
-        <div className="pt-6 pb-2 px-3 text-[10px] font-mono font-bold uppercase tracking-wider text-stone-400">
-          Services
-        </div>
-
-        <button
-          type="button"
-          onClick={() => onNavigate('challenges')}
-          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all group cursor-pointer ${
-            currentView === 'challenges'
-              ? 'bg-white text-[#123B5D] shadow-xs border border-[#E2E8E5]'
-              : 'text-stone-600 hover:text-[#101820] hover:bg-white/60'
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            <div className="p-1.5 rounded-xl bg-stone-100 text-stone-500 group-hover:text-[#123B5D]">
-              <FaIcon icon={faAward} className="text-xs" />
-            </div>
-            <span>Défis & Preuves</span>
-          </div>
-          <FaIcon icon={faChevronRight} className="text-stone-400 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity" />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => onNavigate('verify')}
-          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium transition-all group cursor-pointer ${
-            currentView === 'verify'
-              ? 'bg-white text-[#123B5D] shadow-xs border border-[#E2E8E5]'
-              : 'text-stone-600 hover:text-[#101820] hover:bg-white/60'
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            <div className="p-1.5 rounded-xl bg-stone-100 text-stone-500 group-hover:text-[#123B5D]">
-              <FaIcon icon={faShieldHalved} className="text-[#59B83E] text-xs" />
-            </div>
-            <span>Registre de Vérification</span>
-          </div>
-          <FaIcon icon={faChevronRight} className="text-stone-400 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity" />
-        </button>
       </nav>
 
       {/* Bottom User Area */}
@@ -306,7 +254,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           <button
             type="button"
             onClick={onOpenProfileModal}
-            className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl text-[11px] font-medium text-stone-600 hover:text-[#123B5D] hover:bg-stone-50 transition-colors cursor-pointer"
+            className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl text-[11px] font-medium text-stone-600 hover:text-[#06234B] hover:bg-stone-50 transition-colors cursor-pointer"
           >
             <FaIcon icon={faGear} className="text-stone-400 text-[11px]" />
             <span>Profil</span>

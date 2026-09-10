@@ -42,6 +42,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
     setMobileMenuOpen(false);
   };
 
+  const userDashboardView: ViewType = 
+    profile?.account_type === 'company'
+      ? 'dashboard-company'
+      : profile?.account_type === 'mentor'
+      ? 'dashboard-mentor'
+      : 'dashboard-talent';
+
   return (
     <header 
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
@@ -134,7 +141,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
 
               <button
                 type="button"
-                onClick={() => handleNav('dashboard-talent')}
+                onClick={() => handleNav(userDashboardView)}
                 className="sb-btn p-1.5 pr-3 rounded-xl border border-[#E2E8E5] bg-white text-stone-700 hover:bg-stone-50 transition-colors flex items-center gap-2 cursor-pointer shadow-2xs"
                 title="Mon Espace"
               >
@@ -242,7 +249,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
               {user ? (
                 <button
                   type="button"
-                  onClick={() => handleNav('dashboard-talent')}
+                  onClick={() => handleNav(userDashboardView)}
                   className="sb-btn w-full py-2.5 rounded-xl bg-[#123B5D] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <UserAvatar profile={profile} size="xs" />

@@ -38,6 +38,13 @@ export const AppShell: React.FC<AppShellProps> = ({
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const unreadNotificationsCount = 2;
 
+  const defaultDashboardView: ViewType = 
+    profile?.account_type === 'company' 
+      ? 'dashboard-company' 
+      : profile?.account_type === 'mentor' 
+      ? 'dashboard-mentor' 
+      : 'dashboard-talent';
+
   const isViewActive = (navKey: string): boolean => {
     switch (navKey) {
       case 'dashboard':
@@ -72,7 +79,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         <header className="lg:hidden sticky top-0 z-40 bg-[#FAFCFB]/95 backdrop-blur-md border-b border-[#E2E8E5] px-4 py-3 flex items-center justify-between">
           <button
             type="button"
-            onClick={() => onNavigate('dashboard-talent')}
+            onClick={() => onNavigate(defaultDashboardView)}
             className="flex items-center gap-2 cursor-pointer"
           >
             <SkillBridgeLogo size="sm" isDark={theme === 'dark'} />
@@ -104,14 +111,14 @@ export const AppShell: React.FC<AppShellProps> = ({
             >
               <FaIcon icon={faBell} className="text-xs" />
               {unreadNotificationsCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#59B83E] sb-pulse-dot" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#68A91B] sb-pulse-dot" />
               )}
             </button>
 
             <button
               type="button"
               onClick={() => setIsProfileModalOpen(true)}
-              className="p-0.5 rounded-xl hover:ring-2 hover:ring-[#123B5D]/20 transition-all cursor-pointer"
+              className="p-0.5 rounded-xl hover:ring-2 hover:ring-[#06234B]/20 transition-all cursor-pointer"
               aria-label="Mon Profil"
             >
               <UserAvatar profile={profile} size="xs" />
@@ -129,38 +136,53 @@ export const AppShell: React.FC<AppShellProps> = ({
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E2E8E5] px-3 py-2 flex items-center justify-around shadow-lg">
         <button
           type="button"
-          onClick={() => onNavigate('dashboard-talent')}
+          onClick={() => onNavigate(defaultDashboardView)}
           className={`flex flex-col items-center gap-1 p-1 rounded-xl text-[10px] font-medium transition-colors cursor-pointer ${
-            isViewActive('dashboard') ? 'text-[#123B5D] font-bold' : 'text-stone-500'
+            isViewActive('dashboard') ? 'text-[#06234B] font-bold' : 'text-stone-500'
           }`}
         >
-          <div className={`p-1.5 rounded-lg ${isViewActive('dashboard') ? 'bg-[#123B5D] text-white shadow-2xs' : 'bg-transparent'}`}>
+          <div className={`p-1.5 rounded-lg ${isViewActive('dashboard') ? 'bg-[#06234B] text-white shadow-2xs' : 'bg-transparent'}`}>
             <FaIcon icon={faHouse} className="text-xs" />
           </div>
           <span>Accueil</span>
         </button>
 
-        <button
-          type="button"
-          onClick={() => onNavigate('explorer')}
-          className={`flex flex-col items-center gap-1 p-1 rounded-xl text-[10px] font-medium transition-colors cursor-pointer ${
-            isViewActive('explore') ? 'text-[#123B5D] font-bold' : 'text-stone-500'
-          }`}
-        >
-          <div className={`p-1.5 rounded-lg ${isViewActive('explore') ? 'bg-[#123B5D] text-white shadow-2xs' : 'bg-transparent'}`}>
-            <FaIcon icon={faCompass} className="text-xs" />
-          </div>
-          <span>Explorer</span>
-        </button>
+        {profile?.account_type === 'company' ? (
+          <button
+            type="button"
+            onClick={() => onNavigate('opportunities')}
+            className={`flex flex-col items-center gap-1 p-1 rounded-xl text-[10px] font-medium transition-colors cursor-pointer ${
+              currentView === 'opportunities' ? 'text-[#06234B] font-bold' : 'text-stone-500'
+            }`}
+          >
+            <div className={`p-1.5 rounded-lg ${currentView === 'opportunities' ? 'bg-[#06234B] text-white shadow-2xs' : 'bg-transparent'}`}>
+              <FaIcon icon={faCompass} className="text-xs" />
+            </div>
+            <span>Offres</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => onNavigate(profile?.account_type === 'mentor' ? 'talents' : 'project-publish')}
+            className={`flex flex-col items-center gap-1 p-1 rounded-xl text-[10px] font-medium transition-colors cursor-pointer ${
+              currentView === 'talents' || currentView === 'project-publish' ? 'text-[#06234B] font-bold' : 'text-stone-500'
+            }`}
+          >
+            <div className={`p-1.5 rounded-lg ${currentView === 'talents' || currentView === 'project-publish' ? 'bg-[#06234B] text-white shadow-2xs' : 'bg-transparent'}`}>
+              <FaIcon icon={faCompass} className="text-xs" />
+            </div>
+            <span>{profile?.account_type === 'mentor' ? 'Talents' : 'Projets'}</span>
+          </button>
+        )}
 
         <button
           type="button"
           onClick={() => onNavigate('messaging')}
           className={`flex flex-col items-center gap-1 p-1 rounded-xl text-[10px] font-medium transition-colors cursor-pointer ${
-            isViewActive('messaging') ? 'text-[#123B5D] font-bold' : 'text-stone-500'
+            currentView === 'messaging' ? 'text-[#06234B] font-bold' : 'text-stone-500'
           }`}
         >
-          <div className={`p-1.5 rounded-lg ${isViewActive('messaging') ? 'bg-[#123B5D] text-white shadow-2xs' : 'bg-transparent'}`}>
+          <div className={`p-1.5 rounded-lg ${currentView === 'messaging' ? 'bg-[#06234B] text-white shadow-2xs' : 'bg-transparent'}`}>
             <FaIcon icon={faComments} className="text-xs" />
           </div>
           <span>Messages</span>
@@ -168,25 +190,25 @@ export const AppShell: React.FC<AppShellProps> = ({
 
         <button
           type="button"
-          onClick={() => onNavigate('learn')}
+          onClick={() => onNavigate(profile?.account_type === 'company' ? 'talents' : 'opportunities')}
           className={`flex flex-col items-center gap-1 p-1 rounded-xl text-[10px] font-medium transition-colors cursor-pointer ${
-            isViewActive('learn') ? 'text-[#123B5D] font-bold' : 'text-stone-500'
+            currentView === 'opportunities' || currentView === 'talents' ? 'text-[#06234B] font-bold' : 'text-stone-500'
           }`}
         >
-          <div className={`p-1.5 rounded-lg ${isViewActive('learn') ? 'bg-[#123B5D] text-white shadow-2xs' : 'bg-transparent'}`}>
+          <div className={`p-1.5 rounded-lg ${currentView === 'opportunities' || currentView === 'talents' ? 'bg-[#06234B] text-white shadow-2xs' : 'bg-transparent'}`}>
             <FaIcon icon={faGraduationCap} className="text-xs" />
           </div>
-          <span>Apprendre</span>
+          <span>{profile?.account_type === 'company' ? 'Talents' : 'Opportunités'}</span>
         </button>
 
         <button
           type="button"
           onClick={() => onNavigate('passport')}
           className={`flex flex-col items-center gap-1 p-1 rounded-xl text-[10px] font-medium transition-colors cursor-pointer ${
-            isViewActive('passport') ? 'text-[#123B5D] font-bold' : 'text-stone-500'
+            isViewActive('passport') ? 'text-[#06234B] font-bold' : 'text-stone-500'
           }`}
         >
-          <div className={`p-1.5 rounded-lg ${isViewActive('passport') ? 'bg-[#123B5D] text-[#59B83E] shadow-2xs' : 'bg-transparent'}`}>
+          <div className={`p-1.5 rounded-lg ${isViewActive('passport') ? 'bg-[#06234B] text-[#68A91B] shadow-2xs' : 'bg-transparent'}`}>
             <FaIcon icon={faShieldHalved} className="text-xs" />
           </div>
           <span>Passeport</span>

@@ -26,8 +26,6 @@ interface HomeViewProps {
 export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSent, setNewsletterSent] = useState(false);
-  const [challengeEmail, setChallengeEmail] = useState('');
-  const [challengeSent, setChallengeSent] = useState(false);
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,15 +33,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
     setNewsletterSent(true);
     setTimeout(() => {
       setNewsletterEmail('');
-    }, 4000);
-  };
-
-  const handleChallengeNotify = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!challengeEmail) return;
-    setChallengeSent(true);
-    setTimeout(() => {
-      setChallengeEmail('');
     }, 4000);
   };
 
@@ -856,74 +845,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
               <span>Collaborer avec SkillBridge</span>
               <ArrowRight className="w-4 h-4 text-white" />
             </button>
-          </FadeInUp>
-
-        </div>
-      </section>
-
-      {/* 17 — CHALLENGES (COMING SOON) */}
-      <section className="relative py-24 bg-transparent border-b border-[#E2E8E5] z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <FadeInUp>
-            <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4 mb-12">
-              <div>
-                <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#59B83E] block mb-2">
-                  COMING SOON
-                </span>
-                <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-[#101820]">
-                  Prove what you can do.
-                </h2>
-              </div>
-              <span className="text-xs text-stone-500 font-mono">SKILLBRIDGE CHALLENGES · SAISON 01</span>
-            </div>
-          </FadeInUp>
-
-          <FadeInUp delay={0.15}>
-            <div className="p-8 sm:p-12 rounded-3xl bg-[#F5F7F6] border border-[#E2E8E5] space-y-8">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E2E8E5] pb-6">
-                <div>
-                  <span className="text-xs font-mono font-bold text-[#123B5D] uppercase tracking-wider block">
-                    CHALLENGE #001
-                  </span>
-                  <h3 className="font-heading text-xl sm:text-2xl font-bold text-[#101820]">
-                    Design System & Expérience Mobile Panafricaine
-                  </h3>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <span className="px-3 py-1 rounded-md bg-white border border-[#E2E8E5] text-xs font-mono font-bold text-stone-600">
-                    DURÉE : 07 JOURS
-                  </span>
-                  <span className="px-3 py-1 rounded-md bg-[#59B83E]/10 border border-[#59B83E]/30 text-xs font-mono font-bold text-[#59B83E]">
-                    STATUS : COMING SOON
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-sm text-stone-600 font-light max-w-2xl leading-relaxed">
-                Ce challenge évaluera l'aptitude à concevoir une interface bancaire ultra-fluide pour le contexte africain (faible connectivité, multilinguisme et clarté typographique).
-              </p>
-
-              {/* Notification Form */}
-              <form onSubmit={handleChallengeNotify} className="flex flex-col sm:flex-row items-center gap-3 max-w-md">
-                <input
-                  type="email"
-                  required
-                  value={challengeEmail}
-                  onChange={(e) => setChallengeEmail(e.target.value)}
-                  placeholder="Votre adresse email..."
-                  className="sb-focus w-full px-4 py-3 rounded-xl bg-white border border-[#E2E8E5] text-xs text-[#101820] focus:outline-hidden focus:border-[#123B5D]"
-                />
-                <button
-                  type="submit"
-                  className="sb-btn w-full sm:w-auto shrink-0 px-5 py-3 rounded-xl bg-[#123B5D] hover:bg-[#101820] text-white text-xs font-bold transition-all cursor-pointer"
-                >
-                  {challengeSent ? 'Inscrit ✓' : 'Être informé du lancement →'}
-                </button>
-              </form>
-
-            </div>
           </FadeInUp>
 
         </div>

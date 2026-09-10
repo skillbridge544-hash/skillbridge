@@ -18,7 +18,6 @@ import { VerificationView } from './views/VerificationView';
 import { CertificatesView } from './views/CertificatesView';
 import { AuthView } from './views/AuthView';
 import { OnboardingView } from './views/OnboardingView';
-import { DashboardTalentView } from './views/DashboardTalentView';
 import { ContactView } from './views/ContactView';
 import { TermsView } from './views/TermsView';
 import { PrivacyView } from './views/PrivacyView';
@@ -37,15 +36,23 @@ import { AdminDashboardView } from "./views/AdminDashboardView";
 import { PublicProfileView } from "./views/PublicProfileView";
 import { PublicPassportVerificationView } from "./views/PublicPassportVerificationView";
 import { FavoritesView } from "./views/FavoritesView";
+import { TalentDashboard } from './components/dashboard/talent/TalentDashboard';
+import { MentorDashboard } from './components/dashboard/mentor/MentorDashboard';
+import { CompanyDashboard } from './components/dashboard/company/CompanyDashboard';
 
 
 import { PageTransition } from './components/motion/PageTransition';
 
 export const App: React.FC = () => {
-  const { user, isLoading } = useAuth();
+  const { user, profile, isLoading } = useAuth();
   const [currentView, setCurrentView] = useState<ViewType>('home');
   const [verifyCertId, setVerifyCertId] = useState<string | undefined>(undefined);
 
+  const getRoleDefaultDashboard = (): ViewType => {
+    if (profile?.account_type === 'company') return 'dashboard-company';
+    if (profile?.account_type === 'mentor') return 'dashboard-mentor';
+    return 'dashboard-talent';
+  };
 
   // Parse URL hash for direct certificate verification (e.g. #verify?cert=SB-CERT-...)
   useEffect(() => {
@@ -69,9 +76,9 @@ export const App: React.FC = () => {
   // Auto navigate to dashboard when user logs in if on home or auth view
   useEffect(() => {
     if (user && (currentView === 'home' || currentView === 'auth')) {
-      setCurrentView('dashboard-talent');
+      setCurrentView(getRoleDefaultDashboard());
     }
-  }, [user]);
+  }, [user, profile?.account_type]);
 
   // When user logs out, return to public home view
   useEffect(() => {
@@ -176,15 +183,48 @@ export const App: React.FC = () => {
       case 'onboarding':
         return <OnboardingView onNavigate={handleNavigate} />;
       case 'dashboard-talent':
+        return (
+          <TalentDashboard
+            onNavigate={handleNavigate}
+            onRoleSwitch={(role) => {
+              if (role === 'company') setCurrentView('dashboard-company');
+              else if (role === 'mentor') setCurrentView('dashboard-mentor');
+              else setCurrentView('dashboard-talent');
+            }}
+          />
+        );
       case 'dashboard-mentor':
+        return (
+          <MentorDashboard
+            onNavigate={handleNavigate}
+            onRoleSwitch={(role) => {
+              if (role === 'company') setCurrentView('dashboard-company');
+              else if (role === 'mentor') setCurrentView('dashboard-mentor');
+              else setCurrentView('dashboard-talent');
+            }}
+          />
+        );
       case 'dashboard-company':
-        return <DashboardTalentView onNavigate={handleNavigate} />;
+        return (
+          <CompanyDashboard
+            onNavigate={handleNavigate}
+            onRoleSwitch={(role) => {
+              if (role === 'company') setCurrentView('dashboard-company');
+              else if (role === 'mentor') setCurrentView('dashboard-mentor');
+              else setCurrentView('dashboard-talent');
+            }}
+          />
+        );
       case 'contact':
         return <ContactView onNavigate={handleNavigate} />;
       case 'terms':
         return <TermsView onNavigate={handleNavigate} />;
       case 'privacy':
         return <PrivacyView onNavigate={handleNavigate} />;
+      case 'application':
+        return <OpportunitiesView onNavigate={handleNavigate} />;
+      case 'admin-programs':
+        return <AdminDashboardView onNavigate={handleNavigate} />;
       default:
         return (
           <HomeView

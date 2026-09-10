@@ -21,8 +21,40 @@ export const PassportView: React.FC<PassportViewProps> = ({ onNavigate }) => {
   const { profile } = useAuth();
   const [isExporting, setIsExporting] = useState(false);
 
-  // If no user/profile is loaded, we could show a loader or redirect, but layout is protected in App
-  if (!profile) return null;
+  // If no user/profile is loaded, show an informative state
+  if (!profile) {
+    return (
+      <div className="flex-1 w-full min-h-screen bg-[#F7F8F3] py-16 px-4 flex flex-col items-center justify-center text-center">
+        <div className="max-w-md w-full bg-white border border-[#E2E8E5] p-8 rounded-3xl shadow-sm space-y-6">
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-[#06234B]/5 flex items-center justify-center text-[#06234B]">
+            <FaIcon icon={faShareNodes} className="text-xl" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="font-heading text-xl font-bold text-[#06234B]">Skill Passport Numérique</h2>
+            <p className="text-xs text-[#5C6B78] leading-relaxed">
+              Connectez-vous pour consulter ou exporter votre passeport officiel attestant de vos compétences vérifiées et projets accomplis.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => onNavigate('auth')}
+              className="sb-btn flex-1 py-3 px-4 rounded-xl bg-[#06234B] text-white text-xs font-bold hover:bg-[#1A2233] transition-colors cursor-pointer"
+            >
+              Se connecter
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('home')}
+              className="sb-btn flex-1 py-3 px-4 rounded-xl border border-[#E2E8E5] text-[#06234B] text-xs font-bold hover:bg-stone-50 transition-colors cursor-pointer"
+            >
+              Accueil
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Map Profile to SkillPassportData
   const mapSkillLevel = (stage: string, level: number): SkillLevel => {
