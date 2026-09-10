@@ -22,28 +22,28 @@ export interface SkillBridgeLogoProps {
 
 const sizeConfig = {
   sm: {
-    container: 'w-7 h-7 sm:w-8 sm:h-8 p-1',
-    text: 'text-base sm:text-lg',
-    tagline: 'text-[9px]',
-    gap: 'gap-2',
-  },
-  md: {
-    container: 'w-9 h-9 sm:w-10 sm:h-10 p-1.5 sm:p-2',
+    container: 'w-9 h-9 sm:w-10 sm:h-10 p-1',
     text: 'text-lg sm:text-xl',
     tagline: 'text-[10px]',
-    gap: 'gap-2.5 sm:gap-3',
+    gap: 'gap-2.5',
+  },
+  md: {
+    container: 'w-12 h-12 sm:w-14 sm:h-14 p-1 sm:p-1.5',
+    text: 'text-2xl sm:text-3xl',
+    tagline: 'text-[11px]',
+    gap: 'gap-3 sm:gap-3.5',
   },
   lg: {
-    container: 'w-12 h-12 p-2',
-    text: 'text-2xl',
-    tagline: 'text-xs',
-    gap: 'gap-3.5',
-  },
-  xl: {
-    container: 'w-16 h-16 p-2.5',
-    text: 'text-3xl',
+    container: 'w-16 h-16 sm:w-20 sm:h-20 p-1.5 sm:p-2',
+    text: 'text-3xl sm:text-4xl',
     tagline: 'text-xs',
     gap: 'gap-4',
+  },
+  xl: {
+    container: 'w-24 h-24 sm:w-28 sm:h-28 p-2 sm:p-3',
+    text: 'text-4xl sm:text-5xl',
+    tagline: 'text-sm',
+    gap: 'gap-5',
   },
 };
 
@@ -61,14 +61,10 @@ export const SkillBridgeLogo: React.FC<SkillBridgeLogoProps> = ({
   return (
     <div className={`inline-flex items-center ${config.gap} select-none group ${className}`}>
       {/* ========================================================================= */}
-      {/* CONTENEUR VISUEL DU LOGO OFFICIEL                                         */}
-      {/* - Fond blanc pur                                                          */}
-      {/* - Coins légèrement arrondis (border-radius)                               */}
-      {/* - Dimensions adaptées sans débordement (overflow-hidden)                  */}
-      {/* - object-fit: contain pour préserver le ratio du logo                     */}
+      {/* CONTENEUR VISUEL DU LOGO OFFICIEL (AGRANDI ET OPTIMISÉ)                  */}
       {/* ========================================================================= */}
       <div
-        className={`logo-image-container ${config.container} bg-white rounded-lg sm:rounded-xl border border-[#E2E8E5]/90 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs transition-transform group-hover:scale-105`}
+        className={`logo-image-container ${config.container} bg-white rounded-xl sm:rounded-2xl border border-[#E2E8E5] flex items-center justify-center shrink-0 overflow-hidden shadow-sm transition-transform group-hover:scale-105`}
       >
         <img
           src={imageSource}
