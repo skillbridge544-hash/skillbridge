@@ -1,0 +1,9 @@
+# SkillBridge — règles Cursor
+
+- Backend Express + Prisma + PostgreSQL. Réponses API en snake_case.
+- Respecter STRICTEMENT le contrat d'API (voir CONTEXT.md). Ne pas renommer une route sans le dire.
+- Mots de passe hashés (bcrypt), jamais renvoyés. Routes (auth) = middleware JWT.
+- Contrôle de rôle : entreprise ≠ Skill/Project ; talent/mentor ≠ Opportunity.
+- Matching toujours avec correspondances + manquantes, jamais le score seul.
+- Code simple et fonctionnel (hackathon). Commentaires en français.
+- Ne pas committer .env.

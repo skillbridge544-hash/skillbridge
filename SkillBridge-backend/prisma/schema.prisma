@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  talent
+  mentor
+  entreprise
+}
+
+enum Niveau {
+  debutant
+  intermediaire
+  avance
+  expert
+}
+
+enum ContexteProjet {
+  academique
+  professionnel
+  personnel
+}
+
+enum TypeOpportunite {
+  emploi
+  stage
+  mission
+  collaboration
+}
+
+enum StatutOpportunite {
+  ouverte
+  fermee
+}
+
+enum ModeOpportunite {
+  standard
+  generique
+}
+
+enum StatutMentorat {
+  en_attente
+  accepte
+  refuse
+}
+
+model User {
+  id                     String   @id @default(cuid())
+  nom                    String
+  email                  String   @unique
+  motDePasseHash         String   @map("mot_de_passe_hash")
+  role                   Role
+  photoUrl               String?  @map("photo_url")
+  identifiantSkillbridge String   @unique @map("identifiant_skillbridge")
+  bio                    String?
+  localisation           String?
+  objectifs              String?
+  disponibilite          String?
+  nomEntreprise          String?  @map("nom_entreprise")
+  secteur                String?
+  taille                 String?
+  siteWeb                String?  @map("site_web")
+  dateCreation           DateTime @default(now()) @map("date_creation")
+
+  skills           Skill[]
+  projects         Project[]
+  mentorProfile    MentorProfile?
+  demandesEnvoyees MentorshipRequest[] @relation("DemandesTalent")
+  demandesRecues   MentorshipRequest[] @relation("DemandesMentor")
+  opportunites     Opportunity[]
+  messagesEnvoyes  Message[]           @relation("MessagesEnvoyes")
+  messagesRecus    Message[]           @relation("MessagesRecus")
+
+  @@map("users")
+}
+
+model Skill {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  nomCompetence String   @map("nom_competence")
+  niveau        Niveau
+  domaine       String?
+  dateAjout     DateTime @default(now()) @map("date_ajout")
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects      Project[]     @relation("CompetencesUtilisees")
+  opportunities Opportunity[] @relation("CompetencesRequises")
+
+  @@unique([userId, nomCompetence])
+  @@map("skills")
+}
+
+model Project {
+  id          String          @id @default(cuid())
+  userId      String          @map("user_id")
+  titre       String
+  description String
+  role        String?
+  contexte    ContexteProjet?
+  medias      Json            @default("[]")
+  dateCreation DateTime       @default(now()) @map("date_creation")
+
+  user                  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  competencesUtilisees  Skill[] @relation("CompetencesUtilisees")
+
+  @@map("projects")
+}
+
+model MentorProfile {
+  id               String  @id @default(cuid())
+  userId           String  @unique @map("user_id")
+  domaineExpertise String  @map("domaine_expertise")
+  experience       String?
+  disponibilite    String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mentor_profiles")
+}
+
+model MentorshipRequest {
+  id       String         @id @default(cuid())
+  talentId String         @map("talent_id")
+  mentorId String         @map("mentor_id")
+  statut   StatutMentorat @default(en_attente)
+  date     DateTime       @default(now())
+
+  talent User @relation("DemandesTalent", fields: [talentId], references: [id], onDelete: Cascade)
+  mentor User @relation("DemandesMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+
+  @@map("mentorship_requests")
+}
+
+model Opportunity {
+  id             String             @id @default(cuid())
+  entrepriseId   String             @map("entreprise_id")
+  titre          String
+  type           TypeOpportunite
+  description    String
+  domaineGeneral String?            @map("domaine_general")
+  niveauAttendu  Niveau?            @map("niveau_attendu")
+  mode           ModeOpportunite    @default(standard)
+  statut         StatutOpportunite  @default(ouverte)
+  datePublication DateTime          @default(now()) @map("date_publication")
+
+  entreprise           User    @relation(fields: [entrepriseId], references: [id], onDelete: Cascade)
+  competencesRequises  Skill[] @relation("CompetencesRequises")
+
+  @@map("opportunities")
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  expediteurId   String   @map("expediteur_id")
+  destinataireId String   @map("destinataire_id")
+  contenu        String
+  dateEnvoi      DateTime @default(now()) @map("date_envoi")
+  lu             Boolean  @default(false)
+
+  expediteur   User @relation("MessagesEnvoyes", fields: [expediteurId], references: [id], onDelete: Cascade)
+  destinataire User @relation("MessagesRecus", fields: [destinataireId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
